@@ -18,10 +18,11 @@ def main():
         print("     SISTEMA DE GESTIÓN DE EVENTOS      ")
         print("========================================")
         print("1. Listar todos los eventos")
-        print("2. Buscar invitados (Nombre o Correo - Regex)")
+        print("2. Búsqueda específica (Evento o Invitado)") # Nueva opción para búsqueda específica
         print("3. Listar invitados activos")
         print("4. Validar acceso de un invitado a un evento")
         print("5. Top 3 eventos con más invitados")
+        print("6. Ver detalle completo de asistencia ($lookup)") # Nueva opción para consulta avanzada con $lookup
         print("0. Salir")
         print("========================================")
         
@@ -30,13 +31,15 @@ def main():
         if opcion == "1":
             consultas.listar_eventos(coleccion_eventos)
         elif opcion == "2":
-            consultas.buscar_invitados_regex(coleccion_invitados)
+            consultas.buscar_especifico(bd) 
         elif opcion == "3":
             consultas.listar_invitados_activos(coleccion_invitados)
         elif opcion == "4":
             consultas.validar_acceso_evento(bd) # Enviamos la BD completa porque requiere leer ambas colecciones
         elif opcion == "5":
             consultas.obtener_top_eventos(coleccion_eventos)
+        elif opcion == "6":
+            consultas.consultar_detalles_invitados_lookup(bd)
         elif opcion == "0":
             print("Cerrando aplicación. ¡Mucho éxito en la evaluación de INACAP!")
             break
