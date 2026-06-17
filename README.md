@@ -1,8 +1,8 @@
 # Cambios a realizar
 
-# 1. Agregar consultas específicas en la parte de buscar (eventos o invitados). Por ejemplo: buscar un nombre específico, un correo, código, etc. (Punto 2)
+# 1. Agregar consultas específicas en la parte de buscar (eventos o invitados). Por ejemplo: buscar un nombre específico, un correo, código, etc. (Punto 2) Camila
 
-# 2. Agregar consultas con $lookup
+# 2. Agregar consultas con $lookup Camila
 
 # 3. Implementar en la búsqueda manejo de excepciones. Por ejemplo: si buscamos un nombre por mayúscula, minúscula o tílde nos debe mostrar la consuta sin errores. (Cualquier punto que requiera de una bíusqueda)
 
