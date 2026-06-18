@@ -1,10 +1,10 @@
-# =============================================================================
-# OPCIÓN 1: Listar todos los eventos (Campos específicos exigidos por la guía)
+
+# OPCIÓN 1: Listar todos los eventos 
 # =============================================================================
 def listar_eventos(coleccion_eventos):
     print("\n--- LISTADO GENERAL DE EVENTOS ---")
     
-    # Consulta comentada para la profesora:
+    # Consulta comentada:
     # db.eventos.find({}, { "codigo": 1, "nombre": 1, "fecha": 1, "lugar": 1, "categoria": 1, "_id": 0 })
     
     proyeccion = {
@@ -22,6 +22,8 @@ def listar_eventos(coleccion_eventos):
         print(f"Código: {ev.get('codigo')} | Nombre: {ev.get('nombre')}")
         print(f"Fecha: {ev.get('fecha')} | Lugar: {ev.get('lugar')} | Categoría: {ev.get('categoria')}")
         print("-" * 60)
+
+    input("Presione enter para continuar...") #Para que no muestre el menú principal de inmediato
 
 
 # =============================================================================
@@ -55,7 +57,7 @@ def buscar_especifico(base_datos):
             else:
                 print(f"\n✅ Se encontraron {len(resultados)} eventos:")
                 for ev in resultados:
-                    print(f"[{ev.get('codigo')}] {ev.get('nombre')} | Lugar: {ev.get('lugar')} | Categoría: {ev.get('categoria')}")
+                    print(f"\n[{ev.get('codigo')}] {ev.get('nombre')} | Lugar: {ev.get('lugar')} | Categoría: {ev.get('categoria')}")
 
         elif opcion == "2":
             termino = input("Ingrese el término de búsqueda para el Invitado (nombre, RUT o correo): ").strip()
@@ -76,7 +78,7 @@ def buscar_especifico(base_datos):
             else:
                 print(f"\n✅ Se encontraron {len(resultados)} invitados:")
                 for inv in resultados:
-                    print(f"RUT: {inv.get('rut')} | Nombre: {inv.get('nombre')} | Correo: {inv.get('correo')}")
+                    print(f"\nRUT: {inv.get('rut')} | Nombre: {inv.get('nombre')} | Correo: {inv.get('correo')}")
         
         else:
             print("❌ Opción no válida. Por favor, elija 1 o 2.")
@@ -85,13 +87,15 @@ def buscar_especifico(base_datos):
         # Punto 3: Manejo genérico de excepciones para informar errores de base de datos
         print(f"❌ Error crítico durante la búsqueda: {e}")
 
+    input("Presione enter para continuar...") #Para que no muestre el menú principal de inmediato
+
 
 # =============================================================================
-# NUEVA OPCIÓN: Consulta con $lookup (Punto 2 Camila)
+# Consulta con $lookup (Punto 2 Camila)
 # Une la información de eventos con la información detallada de invitados
 # =============================================================================
 def consultar_detalles_invitados_lookup(base_datos):
-    print("\n--- DETALLE DE INVITADOS POR EVENTO (USANDO $LOOKUP) ---")
+    print("\n--- DETALLE DE INVITADOS POR EVENTO ---")
     try:
         pipeline = [
             # 1. Descomponemos el array de invitados que existe dentro de cada evento
@@ -125,21 +129,22 @@ def consultar_detalles_invitados_lookup(base_datos):
             print("No se encontraron registros vinculados.")
         else:
             for res in resultados:
-                print(f"Evento: {res['evento']} | Invitado: {res['invitado']} | Empresa: {res['empresa']} | Estado: {res['estado_asistencia']}")
+                print(f"\nEvento: {res['evento']} | Invitado: {res['invitado']} | Empresa: {res['empresa']} | Estado: {res['estado_asistencia']}")
     except Exception as e:
-        print(f"❌ Error al realizar la consulta $lookup: {e}")
+        print(f"❌ Error al realizar la consulta: {e}")
 
+    input("Presione enter para continuar...") #Para que no muestre el menú principal de inmediato
 
 # =============================================================================
-# OPCIÓN 3: Listar invitados activos (Filtro básico de estado)
+#  Listar invitados activos (Filtro básico de estado)
 # Cumple con: Punto 5 (Corrección de búsqueda de invitados activos)
 # =============================================================================
 def listar_invitados_activos(coleccion_invitados):
     print("\n--- LISTADO DE INVITADOS ACTIVOS ---")
     
     # Punto 5: Se corrige la búsqueda ya que a veces el campo 'activo' puede venir como booleano o string
-    # Usamos $in para buscar cualquiera de las representaciones de "Verdadero"
-    filtro = {"activo": {"$in": [True, "true", "True", 1]}}
+    # Usamos $regex para ignorar mayúsculas/minúsculas y evitar problemas con espacios ocultos
+    filtro = {"estado": {"$regex": "activo", "$options": "i"}}
     
     resultados = coleccion_invitados.find(filtro)
     lista_resultados = list(resultados)
@@ -148,9 +153,10 @@ def listar_invitados_activos(coleccion_invitados):
         print("No hay invitados activos registrados.")
     else:
         for inv in lista_resultados:
-            print(f"RUT: {inv.get('rut')} | Nombre: {inv.get('nombre')} | Empresa: {inv.get('empresa')}")
+            print(f"\nRUT: {inv.get('rut')} | Nombre: {inv.get('nombre')} | Empresa: {inv.get('empresa')}")
 
-
+    input("Presione enter para continuar...") #Para que no muestre el menú principal de inmediato
+    
 # =============================================================================
 # OPCIÓN 4: Validación de Acceso (Búsqueda cruzada usando el RUT)
 # =============================================================================
@@ -185,8 +191,10 @@ def validar_acceso_evento(base_datos):
     
     if evento:
         print(f"\n✅ ACCESO PERMITIDO. {invitado.get('nombre')} está CONFIRMADO para el evento: {evento.get('nombre')}")
+        input("Presione enter para continuar...") #Para que no muestre el menú principal de inmediato
     else:
         print("\n❌ ACCESO DENEGADO: El invitado no está confirmado o el evento/código no existe.")
+        input("Presione enter para continuar...") #Para que no muestre el menú principal de inmediato
 
 
 # =============================================================================
@@ -216,3 +224,4 @@ def obtener_top_eventos(coleccion_eventos):
     else:
         for puesto, res in enumerate(resultados, 1):
             print(f"Top {puesto}: {res.get('nombre')} -> ({res.get('total_asistentes')} invitados asignados)")
+    input("Presione enter para continuar...") #Para que no muestre el menú principal de inmediato

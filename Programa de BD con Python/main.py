@@ -1,5 +1,5 @@
-import conexion  # Importa tu nuevo archivo independiente de conexión
-import consultas # Importa tus funciones analíticas
+import conexion  
+import consultas 
 
 def main():
     # Invocamos la conexión desde el archivo externo
@@ -22,7 +22,7 @@ def main():
         print("3. Listar invitados activos")
         print("4. Validar acceso de un invitado a un evento")
         print("5. Top 3 eventos con más invitados")
-        print("6. Ver detalle completo de asistencia ($lookup)") # Nueva opción para consulta avanzada con $lookup
+        print("6. Ver detalle completo de asistencia") # Nueva opción para consulta avanzada con $lookup
         print("0. Salir")
         print("========================================")
         
@@ -41,7 +41,7 @@ def main():
         elif opcion == "6":
             consultas.consultar_detalles_invitados_lookup(bd)
         elif opcion == "0":
-            print("Cerrando aplicación. ¡Mucho éxito en la evaluación de INACAP!")
+            print("Cerrando aplicación.")
             break
         else:
             print("❌ Opción no válida. Intente nuevamente.")
