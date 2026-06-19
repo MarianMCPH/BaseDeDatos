@@ -54,53 +54,47 @@ def buscar_especifico(base_datos):
     input("Presione enter para continuar...") #Para que no muestre el menú principal de inmediato
 
 
-def listar_invitados_activos(coleccion_invitados):
-    print("\n--- LISTADO DE INVITADOS ACTIVOS ---")
+def listar_eventos_po_invitado(base_datos):
+    try:
+        correo_invitado = input("Ingrese el correo del invitado: ").strip()
 
-    filtro = {"estado": {"$regex": "activo", "$options": "i"}}
-    
-    resultados = coleccion_invitados.find(filtro)
-    lista_resultados = list(resultados)
-    
-    if len(lista_resultados) == 0:
-        print("No hay invitados activos registrados.")
-    else:
-        for inv in lista_resultados:
-            print(f"\nRUT: {inv.get('rut')} | Nombre: {inv.get('nombre')} | Empresa: {inv.get('empresa')}")
+        #Buscar el invitado por correo
+        invitado = base_datos["invitados"].find_one({"correo": correo_invitado})
 
-    input("Presione enter para continuar...") #Para que no muestre el menú principal de inmediato
-    
+        if not invitado:
+            print(f"No se encontro el invitado con el correo ingresado: '{correo_invitado}'")
+            input("\nPresione enter para continuar...")
 
-def validar_acceso_evento(base_datos):
-    print("\n--- VALIDACIÓN DE ACCESO A EVENTO ---")
-    codigo_evento = input("Ingrese el CÓDIGO del evento (ej. EVT-2025-001): ")
-    correo_invitado = input("Ingrese el CORREO del invitado: ")
-    
-    invitado = base_datos["invitados"].find_one({"correo": correo_invitado})
-    if not invitado:
-        print("El invitado con ese correo no existe en el sistema.")
-        return
+            return
         
-    rut_invitado = invitado["rut"]
-    
-    filtro = {
-        "codigo": codigo_evento,
-        "invitados": {
-            "$elemMatch": {
-                "rut": rut_invitado,
-                "estado": "confirmado"
+        rut_invitado = invitado["rut"]
+        nombre_invitado = invitado["nombre"]
+
+# Consulta: db.eventos.find({ "invitados": { $elemMatch: { "rut": "rut_invitado" } } })
+        filtro = {
+            "invitados": {
+                "$elemMatch": {
+                    "rut": rut_invitado
+                }
             }
         }
-    }
+        
+        eventos = list(base_datos["eventos"].find(filtro, {"codigo": 1, "nombre": 1, "fecha": 1, "_id": 0}))
+        
+        if not eventos:
+            print(f"\n El invitado '{nombre_invitado}' no está registrado en ningún evento.")
+        else:
+            print(f"\n El invitado '{nombre_invitado}' participa en {len(eventos)} evento(s):")
+            print("="*70)
+            for i, ev in enumerate(eventos, 1):
+                print(f"{i}. Código: {ev.get('codigo')} | Nombre: {ev.get('nombre')}")
+                print(f"   Fecha: {ev.get('fecha')}")
+                print("-"*70)
     
-    evento = base_datos["eventos"].find_one(filtro)
+    except Exception as e:
+        print(f"❌ Error al realizar la búsqueda: {e}")
     
-    if evento:
-        print(f"\nACCESO PERMITIDO. {invitado.get('nombre')} está CONFIRMADO para el evento: {evento.get('nombre')}")
-        input("Presione enter para continuar...") #Para que no muestre el menú principal de inmediato
-    else:
-        print("\nACCESO DENEGADO: El invitado no está confirmado o el evento/código no existe.")
-        input("Presione enter para continuar...") #Para que no muestre el menú principal de inmediato
+    input("Presione enter para continuar...")
 
 
 def obtener_top_eventos(coleccion_eventos):

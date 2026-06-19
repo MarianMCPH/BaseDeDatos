@@ -18,9 +18,8 @@ def main():
         print("     SISTEMA DE GESTIÓN DE EVENTOS      ")
         print("========================================")
         print("1. Búsqueda específica (Evento o Invitado)") 
-        print("2. Listar invitados activos")
-        print("3. Validar acceso de un invitado a un evento")
-        print("4. Top 3 eventos con más invitados")
+        print("2. Buscar invitado activo por correo")
+        print("3. Top 3 eventos con más invitados")
         print("0. Salir")
         print("========================================")
         
@@ -29,10 +28,8 @@ def main():
         if opcion == "1":
             consultas.buscar_especifico(bd)
         elif opcion == "2":
-            consultas.listar_invitados_activos(coleccion_invitados)
+            consultas.listar_eventos_po_invitado(bd) 
         elif opcion == "3":
-            consultas.validar_acceso_evento(bd) 
-        elif opcion == "4":
             consultas.obtener_top_eventos(coleccion_eventos)
         elif opcion == "0":
             print("Cerrando aplicación.")
